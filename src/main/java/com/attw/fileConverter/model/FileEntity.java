@@ -26,7 +26,7 @@ public class FileEntity {
     private List<FileDetail> fileDetails;
     @ManyToOne
     @JoinColumn(name = "config_mapping_id")
-    private ConfigMapping configMapping;
+    private Mapping configMapping;
 
 
 }
