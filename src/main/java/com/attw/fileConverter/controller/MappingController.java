@@ -17,9 +17,8 @@ public class MappingController {
 
     private final MappingService mappingService;
 
-    @PostMapping
+    @PostMapping("/savemap")
     public ResponseEntity<Mapping> saveMapping(@RequestBody MappingDTO mappingDTO) {
-
         Mapping savedMapping = mappingService.saveMapping(mappingDTO);
         return ResponseEntity.ok(savedMapping);
     }
