@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ConfigMappingDetailRepository extends JpaRepository<ConfigMappingDetail, Long> {
+public interface ConfigMappingRepository extends JpaRepository<ConfigMappingDetail, Long> {
 
 
 }
