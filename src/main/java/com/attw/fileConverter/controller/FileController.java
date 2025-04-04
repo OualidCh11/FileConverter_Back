@@ -1,8 +1,5 @@
 package com.attw.fileConverter.controller;
 
-import com.attw.fileConverter.model.FileEntity;
-import com.attw.fileConverter.repository.FileRepository;
-import com.attw.fileConverter.service.interfqce.FileDetailService;
 import com.attw.fileConverter.service.interfqce.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
