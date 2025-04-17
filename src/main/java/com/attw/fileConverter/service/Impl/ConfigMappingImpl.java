@@ -12,6 +12,7 @@ import com.attw.fileConverter.service.interfqce.MappingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,21 +23,22 @@ public class ConfigMappingImpl implements ConfigMappingService {
     private final MappingRepository mappingRepository;
     private final FileDetailRepository fileDetailRepository;
 
-
     @Override
     public ConfigMappingDetail saveConfigMapping(ConfigMappingDTO configMappingDTO) {
-        ConfigMappingDetail configMappingDetail = new ConfigMappingDetail();
-        configMappingDetail.setNrLineFiles(configMappingDTO.getNrLineFiles());
-        configMappingDetail.setKeySource(configMappingDTO.getKeySource());
-        configMappingDetail.setKeyDistination(configMappingDTO.getKeyDistination());
-        configMappingDetail.setValueDistination(configMappingDTO.getValueDistination());
-
-        Optional<Mapping> mapping = mappingRepository.findById(configMappingDTO.getConfigMappingId());
-        mapping.ifPresent(configMappingDetail :: setConfigMapping);
-
-        Optional<FileDetail> fileDetail = fileDetailRepository.findById(configMappingDTO.getFileDetailId());
-        fileDetail.ifPresent(configMappingDetail :: setFileDetail);
-
-        return configMappingRepository.save(configMappingDetail);
+        return null;
     }
+
+
+    //@Override
+    //public ConfigMappingDetail saveConfigMapping(ConfigMappingDTO configMappingDTO) {
+//
+    //    Mapping lastMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
+    //    if (lastMapping != null) {
+    //        throw new RuntimeException("Aucun mapping trouvé");
+    //    }
+//
+    //    List<FileDetail> fileDetails = fileDetailRepository.findByFileEntity_FileNameAndStatut()
+//
+    //    return configMappingRepository.save(configMappingDetail);
+    //}
 }

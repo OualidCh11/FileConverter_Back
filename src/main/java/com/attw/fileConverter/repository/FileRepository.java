@@ -13,8 +13,11 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
     List<FileEntity> findByFileName(String fileName);
 
-    @Query("SELECT f FROM FileEntity f WHERE f.localDateTime IS NOT NULL ORDER BY f.localDateTime DESC")
-    FileEntity findLastUploadedFile();
+    //@Query("SELECT f FROM FileEntity f WHERE f.localDateTime IS NOT NULL ORDER BY f.localDateTime DESC")
+    //List<FileEntity> findLastUploadedFileLimited();
 
-    
+    FileEntity findTopByLocalDateTimeIsNotNullOrderByLocalDateTimeDesc();
+
+
+
 }

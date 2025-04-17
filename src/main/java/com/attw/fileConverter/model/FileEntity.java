@@ -18,12 +18,14 @@ public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String fileName;
-    private LocalDateTime localDateTime;
     private String typeFile;
+    private LocalDateTime localDateTime;
 
     @OneToMany(mappedBy = "fileEntity", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<FileDetail> fileDetails;
+
     @ManyToOne
     @JoinColumn(name = "config_mapping_id")
     private Mapping configMapping;

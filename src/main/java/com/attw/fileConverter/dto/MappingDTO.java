@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class MappingDTO {
 
-    private String fileSourceName;
-    private String fileDestinationName;
+    private String fileDestinqtionName;
 }

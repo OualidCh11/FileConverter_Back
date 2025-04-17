@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface FileDetailRepository extends JpaRepository<FileDetail, Long> {
     List<FileDetail> findByFileEntityIdAndStatut(Long fileEntity_id, Statut statut);
+    List<FileDetail> findByFileEntity_FileNameAndStatut(String fileName, Statut statut);
 
     List<FileDetail> findByFileEntityId(Long fileEntity_id);
 }

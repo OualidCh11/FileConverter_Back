@@ -14,15 +14,22 @@ import java.util.List;
 @Entity
 @Table(name = "config_mapping")
 public class Mapping {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String fileSource;
     private String fileDestinqtionJson;
-    private Statut status;
+
+
     private LocalDateTime localDateTime;
+
+    private Statut status;
+
     @OneToMany(mappedBy = "configMapping" , cascade = CascadeType.ALL)
     private List<FileEntity> fileEntities;
-    @OneToMany(mappedBy = "configMapping")
+
+    @OneToMany(mappedBy = "configMapping" , cascade = CascadeType.ALL)
     private List<ConfigMappingDetail> configMappingDetails;
 }

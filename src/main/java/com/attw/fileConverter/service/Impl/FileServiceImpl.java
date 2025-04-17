@@ -22,26 +22,26 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void saveFileMetadataAndProcess(MultipartFile file) throws IOException {
-        // Vérifier si un fichier avec le même nom existe déjà
+
         List<FileEntity> existingFiles = fileRepository.findByFileName(file.getOriginalFilename());
 
         if (!existingFiles.isEmpty()) {
             throw new RuntimeException("Un fichier avec ce nom existe déjà !");
         }
 
-        // Enregistrement des métadonnées du fichier
+
         FileEntity fileEntity = new FileEntity();
         fileEntity.setFileName(file.getOriginalFilename());
         fileEntity.setTypeFile("PLAT");
         fileEntity.setLocalDateTime(LocalDateTime.now());
-
+ 
         FileEntity savedFile = fileRepository.save(fileEntity);
 
-        // Enregistrement du contenu du fichier dans FileDetail
         fileDetailService.saveFileContent(file, savedFile);
 
-        // ✅ Lancer automatiquement le traitement après l'upload
         fileProcessorService.processFile(savedFile.getId());
     }
 }
+
+
 
