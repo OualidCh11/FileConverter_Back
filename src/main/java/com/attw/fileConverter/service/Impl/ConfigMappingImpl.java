@@ -8,12 +8,8 @@ import com.attw.fileConverter.repository.ConfigMappingRepository;
 import com.attw.fileConverter.repository.FileDetailRepository;
 import com.attw.fileConverter.repository.MappingRepository;
 import com.attw.fileConverter.service.interfqce.ConfigMappingService;
-import com.attw.fileConverter.service.interfqce.MappingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +21,25 @@ public class ConfigMappingImpl implements ConfigMappingService {
 
     @Override
     public ConfigMappingDetail saveConfigMapping(ConfigMappingDTO configMappingDTO) {
-        return null;
+        Mapping configMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
+        if (configMapping != null) {
+            throw new RuntimeException("Aucun mapping trouvé");
+        }
+
+        FileDetail fileDetail = fileDetailRepository.findById(configMappingDTO.getFileDetailId()).orElseThrow(() ->
+                new RuntimeException("FileDetail introuvable avec l'ID: " + configMappingDTO.getFileDetailId()));
+
+        ConfigMappingDetail configMappingDetail = new ConfigMappingDetail();
+        configMappingDetail.setNrLineFiles(configMappingDTO.getNrLineFiles());
+        configMappingDetail.setKeySource(configMappingDTO.getKeySource());
+        configMappingDetail.setTypeFile(configMappingDTO.getTypeFile());
+        configMappingDetail.setKeyDistination(configMappingDTO.getKeyDistination());
+        configMappingDetail.setValueDistination(configMappingDTO.getValueDistination());
+        configMappingDetail.setStartPos(configMappingDTO.getStartPos());
+        configMappingDetail.setEndPos(configMappingDTO.getEndPos());
+        configMappingDetail.setConfigMapping(configMapping);
+        configMappingDetail.setFileDetail(fileDetail);
+
+        return configMappingRepository.save(configMappingDetail);
     }
-
-
-    //@Override
-    //public ConfigMappingDetail saveConfigMapping(ConfigMappingDTO configMappingDTO) {
-//
-    //    Mapping lastMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
-    //    if (lastMapping != null) {
-    //        throw new RuntimeException("Aucun mapping trouvé");
-    //    }
-//
-    //    List<FileDetail> fileDetails = fileDetailRepository.findByFileEntity_FileNameAndStatut()
-//
-    //    return configMappingRepository.save(configMappingDetail);
-    //}
 }

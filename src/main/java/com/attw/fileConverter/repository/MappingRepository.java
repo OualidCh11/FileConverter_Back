@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface MappingRepository extends JpaRepository<Mapping, Long> {
 
     Mapping findTopByOrderByLocalDateTimeDesc();
-
+    
 }

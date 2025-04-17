@@ -21,7 +21,8 @@ public class ConfigMappingDetail {
     private String typeFile;
     private String keyDistination;
     private String valueDistination;
-
+    private int startPos;
+    private int endPos;
     @ManyToOne
     @JoinColumn(name = "config_mapping_id")
     private Mapping configMapping;
