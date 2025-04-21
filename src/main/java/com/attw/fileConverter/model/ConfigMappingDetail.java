@@ -1,5 +1,6 @@
 package com.attw.fileConverter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,9 +26,11 @@ public class ConfigMappingDetail {
     private int endPos;
     @ManyToOne
     @JoinColumn(name = "config_mapping_id")
+    @JsonIgnore
     private Mapping configMapping;
     @ManyToOne
     @JoinColumn(name = "file_detail_id", nullable = false)
+    @JsonIgnore
     private FileDetail fileDetail;
     @OneToMany(mappedBy = "configMappingDetail" , cascade = CascadeType.ALL)
     private List<OutMapping> outMappings;

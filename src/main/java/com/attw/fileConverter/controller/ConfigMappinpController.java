@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/conf-map")
 @RequiredArgsConstructor
@@ -18,8 +20,8 @@ public class ConfigMappinpController {
     private final ConfigMappingService configMappingService;
 
     @PostMapping("/save_confmap")
-    public ResponseEntity<ConfigMappingDetail> saveConfMapping(@RequestBody ConfigMappingDTO configMappingDTO) {
-        ConfigMappingDetail saveConfMapping = configMappingService.saveConfigMapping(configMappingDTO);
+    public ResponseEntity<List<ConfigMappingDetail>> saveConfMapping(@RequestBody ConfigMappingDTO configMappingDTO) {
+        List<ConfigMappingDetail> saveConfMapping = configMappingService.saveConfigMapping(configMappingDTO);
         return ResponseEntity.ok(saveConfMapping);
     }
 

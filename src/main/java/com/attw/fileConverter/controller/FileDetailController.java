@@ -17,7 +17,7 @@ public class FileDetailController {
 
     @GetMapping("/{fileId}")
     public ResponseEntity<List<FileDetail>> getFileDetails(@PathVariable Long fileId) {
-        List<FileDetail> fileDetails = fileDetailRepository.findByFileEntityId(fileId); // Utilisation directe du repository
+        List<FileDetail> fileDetails = fileDetailRepository.findByFileEntityId(fileId);
         return ResponseEntity.ok(fileDetails);
     }
 }
