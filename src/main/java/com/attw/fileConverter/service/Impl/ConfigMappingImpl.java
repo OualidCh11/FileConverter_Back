@@ -9,6 +9,7 @@ import com.attw.fileConverter.repository.ConfigMappingRepository;
 import com.attw.fileConverter.repository.FileDetailRepository;
 import com.attw.fileConverter.repository.MappingRepository;
 import com.attw.fileConverter.service.interfqce.ConfigMappingService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ConfigMappingImpl implements ConfigMappingService {
 
@@ -24,7 +26,7 @@ public class ConfigMappingImpl implements ConfigMappingService {
     private final FileDetailRepository fileDetailRepository;
 
     @Override
-    public List<ConfigMappingDetail> saveConfigMapping(ConfigMappingDTO configMappingDTO) {
+    public List<ConfigMappingDetail> saveConfigMapping(List<ConfigMappingDTO> configMappingDTOList) {
         Mapping configMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
         if (configMapping == null) {
             throw new RuntimeException("Aucun mapping trouvé");
@@ -40,32 +42,44 @@ public class ConfigMappingImpl implements ConfigMappingService {
         List<ConfigMappingDetail> lastSavedConfig = new ArrayList<>();
 
 
-        for (FileDetail fileDetail : fileDetails) {
-            String content = fileDetail.getContentFile();
-            String extractedValue = "";
+        for (ConfigMappingDTO configMappingDTO : configMappingDTOList) {
 
-            if (content.length() >= configMappingDTO.getEndPos()) {
-                extractedValue = content.substring(
-                        configMappingDTO.getStartPos() - 1, // Java commence à 0
-                        configMappingDTO.getEndPos()
-                ).trim();
+            for (FileDetail fileDetail : fileDetails) {
+                String content = fileDetail.getContentFile();
+                String extractedValue = "";
+
+
+
+                if(content != null && !content.isEmpty()){
+                    if (configMappingDTO.getStartPos() > 0
+                            && configMappingDTO.getEndPos() <= content.length() && configMappingDTO.getStartPos() <= configMappingDTO.getEndPos()){
+                        extractedValue = content.substring(configMappingDTO.getStartPos() - 1, configMappingDTO.getEndPos()).trim();
+                    }
+                }else{
+                    throw new RuntimeException(
+                            "Positions invalides : startPos=" + configMappingDTO.getStartPos() +
+                                    ", endPos=" + configMappingDTO.getEndPos() +
+                                    ", longueur ligne=" + content.length()
+                    );
+                }
+
+                ConfigMappingDetail configMappingDetail = new ConfigMappingDetail();
+                configMappingDetail.setNrLineFiles(fileDetail.getNrLines());
+                configMappingDetail.setKeySource(configMappingDTO.getKeySource());
+                configMappingDetail.setTypeFile(configMappingDTO.getTypeFile());
+                configMappingDetail.setKeyDistination(configMappingDTO.getKeyDistination());
+                configMappingDetail.setValueDistination(extractedValue);
+                configMappingDetail.setStartPos(configMappingDTO.getStartPos());
+                configMappingDetail.setEndPos(configMappingDTO.getEndPos());
+                configMappingDetail.setConfigMapping(configMapping);
+                configMappingDetail.setFileDetail(fileDetail);
+
+                lastSavedConfig.add(configMappingRepository.save(configMappingDetail));
+
+
             }
-
-            ConfigMappingDetail configMappingDetail = new ConfigMappingDetail();
-            configMappingDetail.setNrLineFiles(fileDetail.getNrLines());
-            configMappingDetail.setKeySource(configMappingDTO.getKeySource());
-            configMappingDetail.setTypeFile(configMappingDTO.getTypeFile());
-            configMappingDetail.setKeyDistination(configMappingDTO.getKeyDistination());
-            configMappingDetail.setValueDistination(extractedValue);
-            configMappingDetail.setStartPos(configMappingDTO.getStartPos());
-            configMappingDetail.setEndPos(configMappingDTO.getEndPos());
-            configMappingDetail.setConfigMapping(configMapping);
-            configMappingDetail.setFileDetail(fileDetail);
-
-            lastSavedConfig.add(configMappingRepository.save(configMappingDetail));
-
-
         }
+
 
 
         return lastSavedConfig;

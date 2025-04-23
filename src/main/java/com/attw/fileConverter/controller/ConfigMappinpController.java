@@ -20,8 +20,8 @@ public class ConfigMappinpController {
     private final ConfigMappingService configMappingService;
 
     @PostMapping("/save_confmap")
-    public ResponseEntity<List<ConfigMappingDetail>> saveConfMapping(@RequestBody ConfigMappingDTO configMappingDTO) {
-        List<ConfigMappingDetail> saveConfMapping = configMappingService.saveConfigMapping(configMappingDTO);
+    public ResponseEntity<List<ConfigMappingDetail>> saveConfMapping(@RequestBody List<ConfigMappingDTO> configMappingDTOList) {
+        List<ConfigMappingDetail> saveConfMapping = configMappingService.saveConfigMapping(configMappingDTOList);
         return ResponseEntity.ok(saveConfMapping);
     }
 
