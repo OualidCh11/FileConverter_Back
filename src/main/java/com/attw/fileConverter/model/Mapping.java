@@ -22,7 +22,6 @@ public class Mapping {
     private String fileSource;
     private String fileDestinqtionJson;
 
-
     private LocalDateTime localDateTime;
 
     private Statut status;
