@@ -1,0 +1,40 @@
+[
+  {
+    "senderApplication": "",
+    "executionDate": "",
+    "creReference": "",
+    "eventCode": "",
+    "productCode": "",
+    "subEventCode": "",
+    "operationNumber": "",
+    "sopOperations": [
+      {
+        "operationInfo": {
+          "operationID": "",
+          "operationDate": "",
+          "preferentialValueDate": "",
+          "operationType": "",
+          "amount": ""
+        },
+        "accountHolderInfo": {
+          "accountCurrency": "",
+          "accountHolderName": "",
+          "accountHolder": "",
+          "accountHolderBicCode": ""
+        },
+        "additionalsInfo": {
+          "channelReference": "",
+          "clearingReference": "",
+          "endToEndReference": "",
+          "theirReference": "",
+          "intradayReference": "",
+          "channel": "",
+          "productId": "",
+          "clientCategory": "",
+          "applicant": "",
+          "paydet": ""
+        }
+      }
+    ]
+  }
+]

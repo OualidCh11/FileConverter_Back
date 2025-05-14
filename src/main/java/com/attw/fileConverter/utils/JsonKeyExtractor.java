@@ -12,7 +12,7 @@ public class JsonKeyExtractor {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(json);
         List<String> keys = new ArrayList<>();
-        extractKeysRecursively(node," ",keys);
+        extractKeysRecursively(node,"",keys);
         return keys;
     }
 
