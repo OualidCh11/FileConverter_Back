@@ -5,7 +5,7 @@ import com.attw.fileConverter.model.ConfigMappingDetail;
 
 import java.util.List;
 
-public interface ConfigMappingService {
+public interface    ConfigMappingService {
     List<ConfigMappingDetail> saveConfigMapping(List<ConfigMappingDTO> configMappingDTOList);
 
 }
