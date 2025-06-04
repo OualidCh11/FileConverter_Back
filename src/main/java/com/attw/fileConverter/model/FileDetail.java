@@ -22,9 +22,6 @@ public class FileDetail {
     private String contentFile;
     @Enumerated(EnumType.STRING)
     private Statut statut;
-    @Enumerated(EnumType.STRING)
-    private LineType lineType;
-    private String codeCRE;
 
     @OneToMany(mappedBy = "fileDetail", cascade = CascadeType.ALL)
     private List<ConfigMappingDetail> configMappingDetails;

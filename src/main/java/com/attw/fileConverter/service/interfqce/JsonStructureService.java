@@ -1,12 +1,16 @@
 package com.attw.fileConverter.service.interfqce;
 
 
+import com.attw.fileConverter.dto.PositionJsonDto;
+import com.attw.fileConverter.model.JsonStructure;
+
 import java.io.IOException;
+import java.util.List;
 
 public interface JsonStructureService {
 
-    void saveJsonStructureKeys(String json , String fileDestination) throws IOException;
-    void saveJsonStructureKeysFromFile(String filePath,String fileJsonName)throws IOException;
+    void saveJsonStructureWithPosition(String jsonContent , String fileDestination, List<PositionJsonDto> positionJsonDtos) throws IOException;
 
 
+    List<JsonStructure> getByFileDestination(String fileDestination);
 }

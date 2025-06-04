@@ -1,5 +1,6 @@
 package com.attw.fileConverter.controller;
 
+import com.attw.fileConverter.dto.JsonUploadRequest;
 import com.attw.fileConverter.model.JsonStructure;
 import com.attw.fileConverter.repository.JsonStructureRepository;
 import com.attw.fileConverter.service.interfqce.JsonStructureService;
@@ -17,30 +18,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JsonStructureController {
 
-    private final JsonStructureRepository jsonStructureRepository;
     private final JsonStructureService jsonStructureService;
 
-    @GetMapping("/get-keys")
-    public ResponseEntity<List<String>> getKeys(@RequestParam String fileName) {
-        List<String> keys = jsonStructureRepository.findByFileDestination(fileName)
-                .stream()
-                .map(JsonStructure::getKeyPath)
-                .toList();
-        return ResponseEntity.ok(keys);
-    }
-
-    @PostMapping("/save-keys")
-    public ResponseEntity<String> SaveStructureJson(@RequestBody Map<String, String> jsonStructureMap) throws JsonProcessingException {
-        String json = jsonStructureMap.get("json");
-        String fileJson = jsonStructureMap.get("fileJson");
+    @PostMapping("/get-keys")
+    public ResponseEntity<String> uploadJsonStructure(@RequestParam JsonUploadRequest jsonUploadRequest) {
         try {
-            jsonStructureService.saveJsonStructureKeys(json,fileJson);
-            return ResponseEntity.ok("Saved Json Structure");
+            jsonStructureService.saveJsonStructureWithPosition(
+                    jsonUploadRequest.getJsonContent(),
+                    jsonUploadRequest.getFileDestination(),
+                    jsonUploadRequest.getPositionJsonDtos()
 
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Saved Json Structure failed"+e.getMessage());
+            );
+            return ResponseEntity.ok("key et position enregistrees avec succes");
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("erreur :"+e.getMessage());
         }
     }
 
+    @GetMapping("/getByDestination")
+    public ResponseEntity<List<JsonStructure>> getByFileDestination(@RequestParam String fileDestination) {
+        return ResponseEntity.ok(jsonStructureService.getByFileDestination(fileDestination));
+    }
 
 }
