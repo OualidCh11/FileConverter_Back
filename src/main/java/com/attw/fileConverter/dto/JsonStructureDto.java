@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class JsonStructureDto {
 
     private String keyPath;
-    private String fileDestination;
     private int start_position;
     private int end_position;
 }

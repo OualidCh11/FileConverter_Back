@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class JsonUploadRequest {
 
-    private String jsonContent;
     private String fileDestination;
     private List<PositionJsonDto> positionJsonDtos;
 }

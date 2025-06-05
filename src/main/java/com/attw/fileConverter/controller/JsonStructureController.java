@@ -6,10 +6,13 @@ import com.attw.fileConverter.repository.JsonStructureRepository;
 import com.attw.fileConverter.service.interfqce.JsonStructureService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -20,19 +23,11 @@ public class JsonStructureController {
 
     private final JsonStructureService jsonStructureService;
 
-    @PostMapping("/get-keys")
-    public ResponseEntity<String> uploadJsonStructure(@RequestParam JsonUploadRequest jsonUploadRequest) {
-        try {
-            jsonStructureService.saveJsonStructureWithPosition(
-                    jsonUploadRequest.getJsonContent(),
-                    jsonUploadRequest.getFileDestination(),
-                    jsonUploadRequest.getPositionJsonDtos()
-
-            );
-            return ResponseEntity.ok("key et position enregistrees avec succes");
-        }catch (Exception e){
-            return ResponseEntity.status(500).body("erreur :"+e.getMessage());
-        }
+    @PostMapping(value = "/saveKeys-withPosition",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadJsonStructure(@RequestPart("file") MultipartFile file,@RequestPart("metadata")JsonUploadRequest jsonUploadRequest ) throws IOException {
+        String jsonContent = new String(file.getBytes(), StandardCharsets.UTF_8);
+        jsonStructureService.saveJsonStructureWithPosition(jsonContent,jsonUploadRequest);
+        return ResponseEntity.ok("La structure enrregestres qvec secces");
     }
 
     @GetMapping("/getByDestination")

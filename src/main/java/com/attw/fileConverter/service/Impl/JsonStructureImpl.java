@@ -1,5 +1,7 @@
 package com.attw.fileConverter.service.Impl;
 
+import com.attw.fileConverter.dto.JsonStructureDto;
+import com.attw.fileConverter.dto.JsonUploadRequest;
 import com.attw.fileConverter.dto.PositionJsonDto;
 import com.attw.fileConverter.model.JsonStructure;
 import com.attw.fileConverter.repository.JsonStructureRepository;
@@ -21,26 +23,29 @@ public class JsonStructureImpl implements JsonStructureService {
 
 
     @Override
-    public void saveJsonStructureWithPosition(String jsonContent, String fileDestination, List<PositionJsonDto> positionJsonDtos) throws IOException {
-        List<String> jsonKeys = JsonKeyExtractor.extractJson(jsonContent);
+    public void saveJsonStructureWithPosition(String jsonContent,JsonUploadRequest jsonUploadRequest) throws IOException {
 
-        List<JsonStructure> jsonStructureList = jsonKeys.stream().map(
-                key -> {
-                    PositionJsonDto positionJsonDto = positionJsonDtos.stream()
-                            .filter(pos-> pos.getKeyPayh().equals(key))
-                            .findFirst()
-                            .orElse(null);
+        List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
 
+        for (PositionJsonDto positionJsonDto :jsonUploadRequest.getPositionJsonDtos()){
+            if (!extractKeyJson.contains(positionJsonDto.getKeyPayh())){
+                throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPayh());
+            }
+        }
+
+        List<JsonStructure> jsonStructureList = jsonUploadRequest.getPositionJsonDtos().stream().map(
+                dto ->{
                     JsonStructure jsonStructure = new JsonStructure();
-                    jsonStructure.setKeyPath(key);
-                    jsonStructure.setFileDestination(fileDestination);
+                    jsonStructure.setKeyPath(dto.getKeyPayh());
+                    jsonStructure.setStart_position(dto.getStart_position());
+                    jsonStructure.setEnd_position(dto.getEnd_position());
+                    jsonStructure.setFileDestination(jsonUploadRequest.getFileDestination());
                     jsonStructure.setDateCreated(LocalDateTime.now());
-                    jsonStructure.setStart_position(positionJsonDto != null? positionJsonDto.getStart_position():0);
-                    jsonStructure.setEnd_position(positionJsonDto != null? positionJsonDto.getEnd_position():0);
+
                     return jsonStructure;
                 }).toList();
-
         jsonStructureRepository.saveAll(jsonStructureList);
+
     }
 
     public List<JsonStructure> getByFileDestination(String fileDestination) {
