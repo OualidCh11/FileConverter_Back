@@ -24,15 +24,30 @@ public class JsonStructureController {
     private final JsonStructureService jsonStructureService;
 
     @PostMapping(value = "/saveKeys-withPosition",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadJsonStructure(@RequestPart("file") MultipartFile file,@RequestPart("metadata")JsonUploadRequest jsonUploadRequest ) throws IOException {
-        String jsonContent = new String(file.getBytes(), StandardCharsets.UTF_8);
-        jsonStructureService.saveJsonStructureWithPosition(jsonContent,jsonUploadRequest);
-        return ResponseEntity.ok("La structure enrregestres qvec secces");
+    public ResponseEntity<String> uploadJsonStructure(
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("metadata")JsonUploadRequest jsonUploadRequest ) {
+        try {
+            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+            jsonStructureService.saveJsonStructureWithPosition(content, jsonUploadRequest);
+            return ResponseEntity.ok("Structure enregistrée avec succès ✅");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Erreur de validation : " + e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Erreur lecture fichier : " + e.getMessage());
+        }
     }
 
     @GetMapping("/getByDestination")
     public ResponseEntity<List<JsonStructure>> getByFileDestination(@RequestParam String fileDestination) {
-        return ResponseEntity.ok(jsonStructureService.getByFileDestination(fileDestination));
+        List<JsonStructure> jsonStructureList = jsonStructureService.getByFileDestination(fileDestination);
+        return ResponseEntity.ok(jsonStructureList);
     }
+
+    public ResponseEntity<List<String>> getAllFileDestinations() {
+        List<String> fileDestination = jsonStructureService.getAllFileDestinations();
+        return ResponseEntity.ok(fileDestination);
+    }
+
 
 }

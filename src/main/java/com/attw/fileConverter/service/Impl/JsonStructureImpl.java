@@ -25,30 +25,40 @@ public class JsonStructureImpl implements JsonStructureService {
     @Override
     public void saveJsonStructureWithPosition(String jsonContent,JsonUploadRequest jsonUploadRequest) throws IOException {
 
+        List<JsonStructure> existing = jsonStructureRepository.findByFileDestination(jsonUploadRequest.getFileDestination());
+        if (!existing.isEmpty()) {
+            throw new IllegalArgumentException("fileDestination existe déjà : " + jsonUploadRequest.getFileDestination());
+        }
+
         List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
 
-        for (PositionJsonDto positionJsonDto :jsonUploadRequest.getPositionJsonDtos()){
-            if (!extractKeyJson.contains(positionJsonDto.getKeyPayh())){
+        for (PositionJsonDto positionJsonDto : jsonUploadRequest.getPositionJsonDtos()) {
+            if (!extractKeyJson.contains(positionJsonDto.getKeyPayh())) {
                 throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPayh());
             }
         }
 
         List<JsonStructure> jsonStructureList = jsonUploadRequest.getPositionJsonDtos().stream().map(
-                dto ->{
+                dto -> {
                     JsonStructure jsonStructure = new JsonStructure();
                     jsonStructure.setKeyPath(dto.getKeyPayh());
                     jsonStructure.setStart_position(dto.getStart_position());
                     jsonStructure.setEnd_position(dto.getEnd_position());
                     jsonStructure.setFileDestination(jsonUploadRequest.getFileDestination());
                     jsonStructure.setDateCreated(LocalDateTime.now());
-
                     return jsonStructure;
                 }).toList();
+
         jsonStructureRepository.saveAll(jsonStructureList);
 
     }
 
     public List<JsonStructure> getByFileDestination(String fileDestination) {
         return jsonStructureRepository.findByFileDestination(fileDestination);
+    }
+
+    @Override
+    public List<String> getAllFileDestinations() {
+        return jsonStructureRepository.findFileDestinations();
     }
 }

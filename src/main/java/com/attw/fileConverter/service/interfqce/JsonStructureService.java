@@ -13,4 +13,6 @@ public interface JsonStructureService {
     void saveJsonStructureWithPosition(String jsonContent,JsonUploadRequest jsonUploadRequest) throws IOException;
 
     List<JsonStructure> getByFileDestination(String fileDestination);
+
+    List<String> getAllFileDestinations();
 }
