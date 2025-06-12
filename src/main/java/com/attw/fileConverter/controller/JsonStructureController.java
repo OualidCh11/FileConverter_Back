@@ -44,6 +44,7 @@ public class JsonStructureController {
         return ResponseEntity.ok(jsonStructureList);
     }
 
+    @GetMapping("/getAllFileDestinations")
     public ResponseEntity<List<String>> getAllFileDestinations() {
         List<String> fileDestination = jsonStructureService.getAllFileDestinations();
         return ResponseEntity.ok(fileDestination);

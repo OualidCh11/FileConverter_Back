@@ -24,4 +24,5 @@ public class JsonStructure {
     private LocalDateTime dateCreated;
     private int start_position;
     private int end_position;
+    private String typeLine;
 }

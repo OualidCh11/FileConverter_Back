@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 
@@ -32,19 +34,24 @@ public class JsonStructureImpl implements JsonStructureService {
 
         List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
 
+        Set<String> normalizedKeys = extractKeyJson.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
         for (PositionJsonDto positionJsonDto : jsonUploadRequest.getPositionJsonDtos()) {
-            if (!extractKeyJson.contains(positionJsonDto.getKeyPayh())) {
-                throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPayh());
+            if (!normalizedKeys.contains(positionJsonDto.getKeyPath())) {
+                throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPath());
             }
         }
 
         List<JsonStructure> jsonStructureList = jsonUploadRequest.getPositionJsonDtos().stream().map(
                 dto -> {
                     JsonStructure jsonStructure = new JsonStructure();
-                    jsonStructure.setKeyPath(dto.getKeyPayh());
+                    jsonStructure.setKeyPath(dto.getKeyPath());
                     jsonStructure.setStart_position(dto.getStart_position());
                     jsonStructure.setEnd_position(dto.getEnd_position());
                     jsonStructure.setFileDestination(jsonUploadRequest.getFileDestination());
+                    jsonStructure.setTypeLine(dto.getTypeLine());
                     jsonStructure.setDateCreated(LocalDateTime.now());
                     return jsonStructure;
                 }).toList();
