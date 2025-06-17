@@ -6,15 +6,14 @@ import com.attw.fileConverter.model.JsonStructure;
 import com.attw.fileConverter.repository.JsonStructureRepository;
 import com.attw.fileConverter.service.interfqce.JsonStructureService;
 import com.attw.fileConverter.utils.JsonKeyExtractor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @RequiredArgsConstructor
 @Service
 public class JsonStructureImpl implements JsonStructureService {
@@ -29,17 +28,17 @@ public class JsonStructureImpl implements JsonStructureService {
             throw new IllegalArgumentException("fileDestination existe déjà : " + jsonUploadRequest.getFileDestination());
         }
 
-        List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
-
-        Set<String> normalizedKeys = extractKeyJson.stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.toSet());
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(jsonContent);
 
         for (PositionJsonDto positionJsonDto : jsonUploadRequest.getPositionJsonDtos()) {
-            if (!normalizedKeys.contains(positionJsonDto.getKeyPath().toLowerCase())) {
+            JsonNode value = getByKeyPath(rootNode, positionJsonDto.getKeyPath());
+            if (value == null) {
                 throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPath());
             }
         }
+
+        List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
 
         List<JsonStructure> jsonStructureList = extractKeyJson.stream().map(
                 key -> {
@@ -68,5 +67,16 @@ public class JsonStructureImpl implements JsonStructureService {
     @Override
     public List<String> getAllFileDestinations() {
         return jsonStructureRepository.findFileDestinations();
+    }
+
+
+    private JsonNode getByKeyPath(JsonNode root, String keyPath) {
+        String[] parts = keyPath.split("\\.");
+        JsonNode current = root;
+        for (String part : parts) {
+            if (current == null) return null;
+            current = current.get(part);
+        }
+        return current;
     }
 }
