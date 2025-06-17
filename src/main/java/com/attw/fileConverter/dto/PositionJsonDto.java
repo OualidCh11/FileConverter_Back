@@ -10,7 +10,5 @@ import lombok.NoArgsConstructor;
 public class PositionJsonDto {
 
     private String keyPath;
-    private int start_position;
-    private int end_position;
     private String typeLine;
 }

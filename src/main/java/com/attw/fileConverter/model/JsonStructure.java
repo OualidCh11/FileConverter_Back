@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +21,6 @@ public class JsonStructure {
     private String keyPath;
     private String fileDestination;
     private LocalDateTime dateCreated;
-    private int start_position;
-    private int end_position;
+
     private String typeLine;
 }

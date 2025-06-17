@@ -1,4 +1,4 @@
-package com.attw.fileConverter.service.Impl;
+package com.attw.fileConverter.service.impl;
 
 import com.attw.fileConverter.model.ConfigMappingDetail;
 import com.attw.fileConverter.model.Mapping;
