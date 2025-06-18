@@ -21,7 +21,6 @@ public class ConfigMappingDetail {
     private String keySource;
     private String typeFile;
     private String keyDistination;
-    private String valueDistination;
     private int startPos;
     private int endPos;
     @ManyToOne
@@ -34,4 +33,7 @@ public class ConfigMappingDetail {
     private FileDetail fileDetail;
     @OneToMany(mappedBy = "configMappingDetail" , cascade = CascadeType.ALL)
     private List<OutMapping> outMappings;
+    @ManyToOne
+    @JoinColumn(name = "json_structure_id")
+    private JsonStructure jsonStructure;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +22,8 @@ public class JsonStructure {
     private String keyPath;
     private String fileDestination;
     private LocalDateTime dateCreated;
-
     private String typeLine;
+
+    @OneToMany(mappedBy = "jsonStructure")
+    private List<ConfigMappingDetail> configMappingDetails;
 }
