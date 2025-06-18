@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OutMappingController {
 
-    private final OutMappingService outMappingService;
-
-    @PostMapping("/jsonFile")
-    public ResponseEntity<String> generateFileJson(){
-        try {
-            String message = outMappingService.generateOutMapping();
-            return ResponseEntity.ok(message);
-        }catch (Exception e){
-            return ResponseEntity.internalServerError().body("Erreur lors de la génération du JSON : " + e.getMessage());
-        }
-    }
+//    private final OutMappingService outMappingService;
+//
+//    @PostMapping("/jsonFile")
+//    public ResponseEntity<String> generateFileJson(){
+//        try {
+//            String message = outMappingService.generateOutMapping();
+//            return ResponseEntity.ok(message);
+//        }catch (Exception e){
+//            return ResponseEntity.internalServerError().body("Erreur lors de la génération du JSON : " + e.getMessage());
+//        }
+//    }
 }

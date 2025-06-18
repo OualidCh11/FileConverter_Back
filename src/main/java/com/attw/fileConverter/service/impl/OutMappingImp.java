@@ -21,50 +21,50 @@ import java.util.TreeMap;
 @Service
 @RequiredArgsConstructor
 public class OutMappingImp implements OutMappingService {
-
-    private final OutMappingRepository outMappingRepository;
-    private final ConfigMappingRepository configMappingRepository;
-    private final MappingRepository mappingRepository;
-    private final ObjectMapper objectMapper;
-
-    @Override
-    public String generateOutMapping() throws Exception {
-
-        Mapping lastMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
-        if (lastMapping == null) {
-            throw new RuntimeException("Aucun mapping trouve!");
-        }
-
-        List<ConfigMappingDetail>configMappingDetails = configMappingRepository.findByConfigMapping(lastMapping);
-        if (configMappingDetails.isEmpty()){
-            throw new RuntimeException("Aucun configmapping trouve!");
-        }
-
-        Map<Integer ,Map<String , String>> jsonOutput = new TreeMap<>();
-        for (ConfigMappingDetail configMD : configMappingDetails) {
-            int lineNumber = configMD.getNrLineFiles();
-            jsonOutput.computeIfAbsent(lineNumber, k -> new LinkedHashMap<>())
-                    .put(configMD.getKeyDistination(),configMD.getValueDistination());
-        }
-
-        String outPutFileName = lastMapping.getFileDestinqtionJson();
-        if (outPutFileName == null || outPutFileName.isEmpty()) {
-            outPutFileName = "output-default.json";
-        }
-        String outputPath = "output/" + outPutFileName;
-        File outputFile = new File(outputPath);
-        outputFile.getParentFile().mkdirs();
-
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, jsonOutput.values());
-
-        OutMapping outMapping = new OutMapping();
-        outMapping.setContentMapper(objectMapper.writeValueAsString(jsonOutput.values()));
-        outMapping.setDateMapping(LocalDateTime.now());
-        outMapping.setConfigMappingDetail(null);
-
-        outMappingRepository.save(outMapping);
-
-        return "Fichier JSON" + outputFile.getAbsolutePath();
-
-    }
+//
+//    private final OutMappingRepository outMappingRepository;
+//    private final ConfigMappingRepository configMappingRepository;
+//    private final MappingRepository mappingRepository;
+//    private final ObjectMapper objectMapper;
+//
+//    @Override
+//    public String generateOutMapping() throws Exception {
+//
+//        Mapping lastMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
+//        if (lastMapping == null) {
+//            throw new RuntimeException("Aucun mapping trouve!");
+//        }
+//
+//        List<ConfigMappingDetail>configMappingDetails = configMappingRepository.findByConfigMapping(lastMapping);
+//        if (configMappingDetails.isEmpty()){
+//            throw new RuntimeException("Aucun configmapping trouve!");
+//        }
+//
+////        Map<Integer ,Map<String , String>> jsonOutput = new TreeMap<>();
+////        for (ConfigMappingDetail configMD : configMappingDetails) {
+////            int lineNumber = configMD.getNrLineFiles();
+////            jsonOutput.computeIfAbsent(lineNumber, k -> new LinkedHashMap<>())
+////                    .put(configMD.getKeyDistination(),configMD.getValueDistination());
+////        }
+//
+//        String outPutFileName = lastMapping.getFileDestinqtionJson();
+//        if (outPutFileName == null || outPutFileName.isEmpty()) {
+//            outPutFileName = "output-default.json";
+//        }
+//        String outputPath = "output/" + outPutFileName;
+//        File outputFile = new File(outputPath);
+//        outputFile.getParentFile().mkdirs();
+//
+//        objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, jsonOutput.values());
+//
+//        OutMapping outMapping = new OutMapping();
+//        outMapping.setContentMapper(objectMapper.writeValueAsString(jsonOutput.values()));
+//        outMapping.setDateMapping(LocalDateTime.now());
+//        outMapping.setConfigMappingDetail(null);
+//
+//        outMappingRepository.save(outMapping);
+//
+//        return "Fichier JSON" + outputFile.getAbsolutePath();
+//
+//    }
 }

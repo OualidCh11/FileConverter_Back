@@ -1,12 +1,10 @@
 package com.attw.fileConverter.service.impl;
 
 import com.attw.fileConverter.dto.ConfigMappingDTO;
-import com.attw.fileConverter.model.ConfigMappingDetail;
-import com.attw.fileConverter.model.FileDetail;
-import com.attw.fileConverter.model.Mapping;
-import com.attw.fileConverter.model.Statut;
+import com.attw.fileConverter.model.*;
 import com.attw.fileConverter.repository.ConfigMappingRepository;
 import com.attw.fileConverter.repository.FileDetailRepository;
+import com.attw.fileConverter.repository.JsonStructureRepository;
 import com.attw.fileConverter.repository.MappingRepository;
 import com.attw.fileConverter.service.interfqce.ConfigMappingService;
 import jakarta.transaction.Transactional;
@@ -24,64 +22,49 @@ public class ConfigMappingImpl implements ConfigMappingService {
     private final ConfigMappingRepository configMappingRepository;
     private final MappingRepository mappingRepository;
     private final FileDetailRepository fileDetailRepository;
+    private final JsonStructureRepository jsonStructureRepository;
+
 
     @Override
     public List<ConfigMappingDetail> saveConfigMapping(List<ConfigMappingDTO> configMappingDTOList) {
         Mapping configMapping = mappingRepository.findTopByOrderByLocalDateTimeDesc();
         if (configMapping == null) {
-            throw new RuntimeException("Aucun mapping trouvé");
+            throw new RuntimeException("Aucun Mapping existant !");
         }
 
-        List<FileDetail> fileDetails = fileDetailRepository.findByFileEntity_FileNameAndStatut(configMapping.
-                getFileSource(), Statut.TR);
+        // Récupère toutes les lignes TR du fichier plat lié au Mapping
+        List<FileDetail> fileDetails = fileDetailRepository.findByFileEntity_FileNameAndStatut(
+                configMapping.getFileSource(), Statut.TR);
 
-        if (fileDetails.isEmpty()){
-            throw new RuntimeException("Aucun contenu de fichier trouvé");
+        if (fileDetails.isEmpty()) {
+            throw new RuntimeException("Aucune ligne du fichier plat trouvée !");
         }
 
-        List<ConfigMappingDetail> lastSavedConfig = new ArrayList<>();
+        List<ConfigMappingDetail> savedDetails = new ArrayList<>();
 
-
-        for (ConfigMappingDTO configMappingDTO : configMappingDTOList) {
-
+        for (ConfigMappingDTO dto : configMappingDTOList) {
             for (FileDetail fileDetail : fileDetails) {
-                String content = fileDetail.getContentFile();
-                String extractedValue = "";
 
+                // Associer la clé JSON
+                JsonStructure jsonStructure = jsonStructureRepository.findByKeyPathAndFileDestination(
+                        dto.getKeyDistination(), configMapping.getFileDestinqtionJson()
+                ).orElseThrow(() -> new RuntimeException(
+                        "Clé JSON non trouvée pour : " + dto.getKeyDistination()));
 
+                ConfigMappingDetail detail = new ConfigMappingDetail();
+                detail.setNrLineFiles(fileDetail.getNrLines());
+                detail.setKeySource(dto.getKeySource());
+                detail.setKeyDistination(dto.getKeyDistination());
+                detail.setStartPos(dto.getStartPos());
+                detail.setEndPos(dto.getEndPos());
+                detail.setConfigMapping(configMapping);
+                detail.setFileDetail(fileDetail);
+                detail.setJsonStructure(jsonStructure);
 
-                if(content != null && !content.isEmpty()){
-                    if (configMappingDTO.getStartPos() > 0
-                            && configMappingDTO.getEndPos() <= content.length() && configMappingDTO.getStartPos() <= configMappingDTO.getEndPos()){
-                        extractedValue = content.substring(configMappingDTO.getStartPos() - 1, configMappingDTO.getEndPos()).trim();
-                    }
-                }else{
-                    throw new RuntimeException(
-                            "Positions invalides : startPos=" + configMappingDTO.getStartPos() +
-                                    ", endPos=" + configMappingDTO.getEndPos() +
-                                    ", longueur ligne=" + content.length()
-                    );
-                }
-
-                ConfigMappingDetail configMappingDetail = new ConfigMappingDetail();
-                configMappingDetail.setNrLineFiles(fileDetail.getNrLines());
-                configMappingDetail.setKeySource(configMappingDTO.getKeySource());
-                configMappingDetail.setTypeFile(configMappingDTO.getTypeFile());
-                configMappingDetail.setKeyDistination(configMappingDTO.getKeyDistination());
-                configMappingDetail.setValueDistination(extractedValue);
-                configMappingDetail.setStartPos(configMappingDTO.getStartPos());
-                configMappingDetail.setEndPos(configMappingDTO.getEndPos());
-                configMappingDetail.setConfigMapping(configMapping);
-                configMappingDetail.setFileDetail(fileDetail);
-
-                lastSavedConfig.add(configMappingRepository.save(configMappingDetail));
-
-
+                savedDetails.add(configMappingRepository.save(detail));
             }
         }
 
-
-
-        return lastSavedConfig;
+        return savedDetails;
     }
 }

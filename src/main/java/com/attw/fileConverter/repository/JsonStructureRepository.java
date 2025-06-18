@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JsonStructureRepository extends JpaRepository<JsonStructure, Long> {
@@ -14,4 +15,6 @@ public interface JsonStructureRepository extends JpaRepository<JsonStructure, Lo
 
     @Query("SELECT DISTINCT j.fileDestination from JsonStructure j")
     List<String> findFileDestinations();
+
+    Optional<JsonStructure> findByKeyPathAndFileDestination(String keyPath, String fileDestination);
 }
