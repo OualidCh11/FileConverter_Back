@@ -23,31 +23,28 @@ public class JsonStructureController {
 
     private final JsonStructureService jsonStructureService;
 
-    @PostMapping(value = "/saveKeys-withPosition",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadJsonStructure(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("metadata")JsonUploadRequest jsonUploadRequest ) {
-        try {
-            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-            jsonStructureService.saveJsonStructureWithPosition(content, jsonUploadRequest);
-            return ResponseEntity.ok("Structure enregistrée avec succès ✅");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Erreur de validation : " + e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Erreur lecture fichier : " + e.getMessage());
-        }
-    }
+    @PostMapping("/saveKeys-withPosition")
+    public ResponseEntity<String> saveKeysWithPosition(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("metadata") String metadata
+    ) throws IOException {
+        String jsonContent = new String(file.getBytes(), StandardCharsets.UTF_8);
 
+        JsonUploadRequest jsonUploadRequest = new com.fasterxml.jackson.databind.ObjectMapper()
+                .readValue(metadata, JsonUploadRequest.class);
+
+        jsonStructureService.saveJsonStructure(jsonContent, jsonUploadRequest);
+
+        return ResponseEntity.ok("Structure JSON sauvegardée avec succès ✅");
+    }
     @GetMapping("/getByDestination")
-    public ResponseEntity<List<JsonStructure>> getByFileDestination(@RequestParam String fileDestination) {
-        List<JsonStructure> jsonStructureList = jsonStructureService.getByFileDestination(fileDestination);
-        return ResponseEntity.ok(jsonStructureList);
+    public ResponseEntity<List<JsonStructure>> getByDestination(@RequestParam String fileDestination) {
+        return ResponseEntity.ok(jsonStructureService.getByFileDestination(fileDestination));
     }
 
-    @GetMapping("/getAllFileDestinations")
-    public ResponseEntity<List<String>> getAllFileDestinations() {
-        List<String> fileDestination = jsonStructureService.getAllFileDestinations();
-        return ResponseEntity.ok(fileDestination);
+    @GetMapping("/getAllDestinations")
+    public ResponseEntity<List<String>> getAllDestinations() {
+        return ResponseEntity.ok(jsonStructureService.getAllFileDestinations());
     }
 
 

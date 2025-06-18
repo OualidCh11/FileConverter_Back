@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface JsonStructureService {
 
-    void saveJsonStructureWithPosition(String jsonContent,JsonUploadRequest jsonUploadRequest) throws IOException;
+    void saveJsonStructure(String jsonContent, JsonUploadRequest jsonUploadRequest) throws IOException;
 
     List<JsonStructure> getByFileDestination(String fileDestination);
 

@@ -21,42 +21,44 @@ public class JsonStructureImpl implements JsonStructureService {
     private final JsonStructureRepository jsonStructureRepository;
 
     @Override
-    public void saveJsonStructureWithPosition(String jsonContent, JsonUploadRequest jsonUploadRequest) throws IOException {
+    public void saveJsonStructure(String jsonContent, JsonUploadRequest jsonUploadRequest) throws IOException {
 
-        List<JsonStructure> existing = jsonStructureRepository.findByFileDestination(jsonUploadRequest.getFileDestination());
-        if (!existing.isEmpty()) {
+        // Vérifie si le fileDestination existe déjà
+        if (!jsonStructureRepository.findByFileDestination(jsonUploadRequest.getFileDestination()).isEmpty()) {
             throw new IllegalArgumentException("fileDestination existe déjà : " + jsonUploadRequest.getFileDestination());
         }
 
+        // Parse JSON en arbre
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonContent);
 
-        for (PositionJsonDto positionJsonDto : jsonUploadRequest.getPositionJsonDtos()) {
-            JsonNode value = getByKeyPath(rootNode, positionJsonDto.getKeyPath());
-            if (value == null) {
-                throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + positionJsonDto.getKeyPath());
+        // Vérifie que chaque keyPath fourni existe bien
+        for (PositionJsonDto dto : jsonUploadRequest.getPositionJsonDtos()) {
+            if (getByKeyPath(rootNode, dto.getKeyPath()) == null) {
+                throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + dto.getKeyPath());
             }
         }
 
-        List<String> extractKeyJson = JsonKeyExtractor.extractJson(jsonContent);
+        // Extrait toutes les clés JSON
+        List<String> allKeys = JsonKeyExtractor.extractJson(jsonContent);
 
-        List<JsonStructure> jsonStructureList = extractKeyJson.stream().map(
-                key -> {
-                    JsonStructure jsonStructure = new JsonStructure();
-                    jsonStructure.setKeyPath(key);
-                    jsonStructure.setFileDestination(jsonUploadRequest.getFileDestination());
-                    jsonStructure.setDateCreated(LocalDateTime.now());
+        // Prépare la liste à sauvegarder
+        List<JsonStructure> structures = allKeys.stream().map(key -> {
+            JsonStructure s = new JsonStructure();
+            s.setKeyPath(key);
+            s.setFileDestination(jsonUploadRequest.getFileDestination());
+            s.setDateCreated(LocalDateTime.now());
 
-                    jsonUploadRequest.getPositionJsonDtos().stream()
-                            .filter(dto -> dto.getKeyPath().equalsIgnoreCase(key))
-                            .findFirst()
-                            .ifPresent(dto -> jsonStructure.setTypeLine(dto.getTypeLine()));
+            // Si le keyPath fait partie des finales déclarées => set le typeLine
+            jsonUploadRequest.getPositionJsonDtos().stream()
+                    .filter(dto -> dto.getKeyPath().equalsIgnoreCase(key))
+                    .findFirst()
+                    .ifPresent(dto -> s.setTypeLine(dto.getTypeLine()));
 
-                    return jsonStructure;
-                }
-        ).toList();
+            return s;
+        }).toList();
 
-        jsonStructureRepository.saveAll(jsonStructureList);
+        jsonStructureRepository.saveAll(structures);
     }
 
     @Override
@@ -68,7 +70,6 @@ public class JsonStructureImpl implements JsonStructureService {
     public List<String> getAllFileDestinations() {
         return jsonStructureRepository.findFileDestinations();
     }
-
 
     private JsonNode getByKeyPath(JsonNode root, String keyPath) {
         String[] parts = keyPath.split("\\.");
