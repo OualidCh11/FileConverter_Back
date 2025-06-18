@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "file")
+@Table(name = "files")
 public class FileEntity {
 
     @Id
@@ -22,6 +22,7 @@ public class FileEntity {
     private String fileName;
     private String typeFile;
     private LocalDateTime localDateTime;
+    private int nbrLines;
 
     @OneToMany(mappedBy = "fileEntity", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<FileDetail> fileDetails;
