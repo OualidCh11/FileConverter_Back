@@ -19,13 +19,14 @@ public class MappingServiceImpl implements MappingService {
 
 
     private final MappingRepository mappingRepository;
-    private final FileRepository fileRepository;
-
 
     @Override
     public Mapping saveMapping(MappingDTO mappingDTO) {
-        if (mappingDTO.getFileSource() == null || mappingDTO.getFileSource().isEmpty()) {
-            throw new RuntimeException("Le nom du fichier plat est obligatoire !");
+        if (mappingDTO.getFileSource() == null || mappingDTO.getFileSource().isBlank()) {
+            throw new IllegalArgumentException("fileSource est obligatoire !");
+        }
+        if (mappingDTO.getFileDestinqtionName() == null || mappingDTO.getFileDestinqtionName().isBlank()) {
+            throw new IllegalArgumentException("fileDestinqtionName est obligatoire !");
         }
 
         Mapping mapping = new Mapping();
