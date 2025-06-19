@@ -27,10 +27,10 @@ public class ConfigMappingDetail {
     @JoinColumn(name = "config_mapping_id")
     @JsonIgnore
     private Mapping configMapping;
-    @ManyToOne
-    @JoinColumn(name = "file_detail_id", nullable = false)
-    @JsonIgnore
-    private FileDetail fileDetail;
+//    @ManyToOne
+//    @JoinColumn(name = "file_detail_id", nullable = false)
+//    @JsonIgnore
+//    private FileDetail fileDetail;
     @OneToMany(mappedBy = "configMappingDetail" , cascade = CascadeType.ALL)
     private List<OutMapping> outMappings;
     @ManyToOne
