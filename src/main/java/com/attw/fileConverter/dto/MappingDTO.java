@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class MappingDTO {
 
     private String fileDestinqtionName;
+    private String fileSource;
 }

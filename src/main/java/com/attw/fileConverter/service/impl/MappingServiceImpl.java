@@ -24,21 +24,16 @@ public class MappingServiceImpl implements MappingService {
 
     @Override
     public Mapping saveMapping(MappingDTO mappingDTO) {
-        // Cherche le dernier fichier uploadé (fileSource)
-        FileEntity lastUploadedFile = fileRepository.findTopByLocalDateTimeIsNotNullOrderByLocalDateTimeDesc();
-
-        if (lastUploadedFile == null) {
-            throw new RuntimeException("Aucun fichier plat uploadé récemment !");
+        if (mappingDTO.getFileSource() == null || mappingDTO.getFileSource().isEmpty()) {
+            throw new RuntimeException("Le nom du fichier plat est obligatoire !");
         }
 
-        // Crée le Mapping
         Mapping mapping = new Mapping();
-        mapping.setFileSource(lastUploadedFile.getFileName());
+        mapping.setFileSource(mappingDTO.getFileSource());
         mapping.setFileDestinqtionJson(mappingDTO.getFileDestinqtionName());
         mapping.setStatus(Statut.TR);
         mapping.setLocalDateTime(LocalDateTime.now());
 
-        // Sauve
         return mappingRepository.save(mapping);
     }
 

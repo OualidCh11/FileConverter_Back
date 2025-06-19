@@ -31,7 +31,7 @@ public class JsonStructureController {
         String jsonContent = new String(file.getBytes(), StandardCharsets.UTF_8);
 
         JsonUploadRequest jsonUploadRequest = new com.fasterxml.jackson.databind.ObjectMapper()
-                .readValue(metadata, JsonUploadRequest.class);
+                .   readValue(metadata, JsonUploadRequest.class);
 
         jsonStructureService.saveJsonStructure(jsonContent, jsonUploadRequest);
 

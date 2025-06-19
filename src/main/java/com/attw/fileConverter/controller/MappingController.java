@@ -16,10 +16,8 @@ public class MappingController {
     private final MappingService mappingService;
 
     @PostMapping("/save-map")
-    public ResponseEntity<?> createMapping(@RequestBody MappingDTO mappingDTO) {
-
-            Mapping recordedMapping = mappingService.saveMapping(mappingDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(recordedMapping);
+    public Mapping saveMapping(@RequestBody MappingDTO mappingDTO) {
+        return mappingService.saveMapping(mappingDTO);
     }
 
 }
