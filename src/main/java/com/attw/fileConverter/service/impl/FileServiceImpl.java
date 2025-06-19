@@ -2,7 +2,6 @@ package com.attw.fileConverter.service.impl;
 
 import com.attw.fileConverter.model.FileEntity;
 import com.attw.fileConverter.repository.FileRepository;
-import com.attw.fileConverter.service.interfqce.FileDetailService;
 import com.attw.fileConverter.service.interfqce.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,7 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
-    private final FileDetailService fileDetailService;
-    private final FileProcessorService fileProcessorService;
+//    private final FileProcessorService fileProcessorService;
 
     @Override
     public void saveFileMetadataAndProcess(MultipartFile file) throws IOException {
@@ -36,10 +34,7 @@ public class FileServiceImpl implements FileService {
         fileEntity.setLocalDateTime(LocalDateTime.now());
  
         FileEntity savedFile = fileRepository.save(fileEntity);
-
-        fileDetailService.saveFileContent(file, savedFile);
-
-        fileProcessorService.processFile(savedFile.getId());
+//        fileProcessorService.processFile(savedFile.getId());
     }
 }
 
