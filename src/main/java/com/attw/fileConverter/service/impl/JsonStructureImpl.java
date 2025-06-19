@@ -23,35 +23,29 @@ public class JsonStructureImpl implements JsonStructureService {
     @Override
     public void saveJsonStructure(String jsonContent, JsonUploadRequest jsonUploadRequest) throws IOException {
 
-        // Vérifie si le fileDestination existe déjà
         if (!jsonStructureRepository.findByFileDestination(jsonUploadRequest.getFileDestination()).isEmpty()) {
             throw new IllegalArgumentException("fileDestination existe déjà : " + jsonUploadRequest.getFileDestination());
         }
 
-        // Parse JSON en arbre
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonContent);
 
-        // Vérifie que chaque keyPath fourni existe bien
         for (PositionJsonDto dto : jsonUploadRequest.getPositionJsonDtos()) {
             if (getByKeyPath(rootNode, dto.getKeyPath()) == null) {
                 throw new IllegalArgumentException("Clé non trouvée dans le JSON : " + dto.getKeyPath());
             }
         }
 
-        // Extrait toutes les clés JSON
         List<String> allKeys = JsonKeyExtractor.extractJson(jsonContent);
 
-        // Prépare la liste à sauvegarder
         List<JsonStructure> structures = allKeys.stream().map(key -> {
             JsonStructure s = new JsonStructure();
             s.setKeyPath(key);
             s.setFileDestination(jsonUploadRequest.getFileDestination());
             s.setDateCreated(LocalDateTime.now());
 
-            // Si le keyPath fait partie des finales déclarées => set le typeLine
             jsonUploadRequest.getPositionJsonDtos().stream()
-                    .filter(dto -> dto.getKeyPath().equalsIgnoreCase(key))
+                    .filter(dto -> dto.getKeyPath().trim().equalsIgnoreCase(key.trim()))
                     .findFirst()
                     .ifPresent(dto -> s.setTypeLine(dto.getTypeLine()));
 
