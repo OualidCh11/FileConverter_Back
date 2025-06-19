@@ -24,8 +24,8 @@ public class FileEntity {
     private LocalDateTime localDateTime;
     private int nbrLines;
 
-    @OneToMany(mappedBy = "fileEntity", cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<FileDetail> fileDetails;
+//    @OneToMany(mappedBy = "fileEntity", cascade = CascadeType.ALL,orphanRemoval = true)
+//    private List<FileDetail> fileDetails;
 
     @ManyToOne
     @JoinColumn(name = "config_mapping_id")

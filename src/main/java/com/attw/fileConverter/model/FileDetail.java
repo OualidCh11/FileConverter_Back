@@ -25,9 +25,9 @@ public class FileDetail {
 
     @OneToMany(mappedBy = "fileDetail", cascade = CascadeType.ALL)
     private List<ConfigMappingDetail> configMappingDetails;
-    @ManyToOne
-    @JoinColumn(name = "file_id", nullable = false)
-    private FileEntity fileEntity;
+//    @ManyToOne
+//    @JoinColumn(name = "file_id", nullable = false)
+//    private FileEntity fileEntity;
 
 
 }
